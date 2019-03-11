@@ -1,25 +1,50 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=EUC-KR"
+    pageEncoding="EUC-KR"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<!DOCTYPE html>
 <html>
 <head>
-<title>Insert title here</title>
+<title>»ç¿ëÀÚ °ü¸®</title>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 </head>
 <body>
-
-<tbody>
-	<c:forEach var="user" items="${userList}">
-		<tr>
-			<td>${user.userId}</td>
-			<td>${user.name}</td>
-			<td>${user.gender}</td>
-			<td>${user.city}</td>
-			<td>ìˆ˜ì •</td>
-			<td>ì‚­ì œ</td>		
-		</tr>
-	</c:forEach>
-</tbody>
-
+	<div class="container">
+		<h2 class="text-center">»ç¿ëÀÚ ¸ñ·Ï</h2>
+		<table class="table table-bordered table table-hover"> 
+			<thead> 
+				<tr> 
+					<th>¾ÆÀÌµğ</th> 
+					<th>ÀÌ¸§</th> 
+					<th>¼ºº°</th>
+					<th>°ÅÁÖÁö</th>
+					<th>&nbsp;</th>
+					<th>&nbsp;</th>
+				</tr> 
+		</thead> 
+		<tbody> 
+			<c:forEach var="user" items="${userList}">
+				<tr>
+					<td>
+					 	<a href="getUser.do?id=${user.userId}">${user.userId}</a>
+					 </td>
+					<td>${user.name}</td>
+					<td>${user.gender}</td>
+					<td>${user.city}</td>
+					<td>
+					     <a href="updateUserForm.do?id=${user.userId}">¼öÁ¤</a>
+					</td>
+					<td><a href="deleteUser.do/${user.userId}">»èÁ¦</a></td>
+				</tr>
+			</c:forEach>
+			<tr>
+				<td colspan="7">
+					<a href="insertUserForm.do">»ç¿ëÀÚ µî·Ï</a>
+				</td>
+			</tr>
+		</tbody> 
+	</table>
+	</div>
 </body>
 </html>
