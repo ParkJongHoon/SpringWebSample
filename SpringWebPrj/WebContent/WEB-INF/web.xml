@@ -44,6 +44,7 @@
 	</servlet>
 
 	<!-- Map all requests to the DispatcherServlet for handling -->
+	<!-- Restful service 하기위해서 /로 설정해야  -->
 	<servlet-mapping>
 		<servlet-name>springDispatcherServlet</servlet-name>
 		<url-pattern>/</url-pattern>
