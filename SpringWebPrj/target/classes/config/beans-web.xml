@@ -20,4 +20,6 @@
 		<property name="prefix" value="/"/>
 		<property name="suffix" value=".jsp"/>
 	</bean>
+	<!-- web 관련 style, library resource import 경로 지정 -->
+	<mvc:resources location="/resources/**" mapping="/resources/import/"/>
 </beans>
