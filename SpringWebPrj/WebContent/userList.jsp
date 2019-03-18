@@ -6,28 +6,11 @@
 <title>사용자 관리</title>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
 <!-- Optional theme -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="<c:url value="/resources/import/lib/vue.min.js" />"></script>
 <script src="<c:url value="/resources/import/lib/axios.min.js" />"></script>
 <script src="<c:url value="/resources/import/lib/jquery-3.3.1.min.js" />"></script>
 <script>
-
-setDataFormat = function(getUserId, getName, getGender, getCity){
-	let dataFormat = { userId:getUserId, name:getName, gender:getGender, city:getCity };
-	return dataFormat
-}
-
-
-selectUselist = function(){
-	axios.get('/SpringWebPrj/users').then(function(response){
-		vueOJ.userList = response.data.data;
-	}).catch(function(error){
-		console.log(error);
-	}).then(function(){
-		// finally execute code
-	});
-}
 
 </script>
 </head>
@@ -45,12 +28,10 @@ selectUselist = function(){
 					<th>&nbsp;</th>
 				</tr> 
 		</thead> 
-		<tbody> 
+		<tbody id="printUserList"> 
 			
 				<tr v-for="user in userList">
-					<td>
-					 	<a :href="'getUser.do?id=' + user.userId">{{user.userId}}</a>
-					 </td>
+					<td><p>{{user.userId}}</p></td>
 					<td><input type="text" :id="user.userId + '_name'" :value="user.name"></td>
 					<td><input type="text" :id="user.userId + '_gender'" :value="user.gender"></td>
 					<td><input type="text" :id="user.userId + '_city'" :value="user.city"></td>
@@ -67,7 +48,8 @@ selectUselist = function(){
 			
 			<tr>
 				<td colspan="7">
-					<a href="insertUserForm.do">사용자 등록</a>
+					<!--  <a href="insertUserForm.do">사용자 등록</a>-->
+					<button onclick="addRecord()">사용자 등록</button>
 				</td>
 			</tr>
 		</tbody>
@@ -75,12 +57,34 @@ selectUselist = function(){
 	</div>
 	<script src="<c:url value="/resources/import/vue/app.js" />"></script>
 	<script type="text/javascript">
-	selectUselist();
+	
+	vueOJ.setDataFormat = function(getUserId, getName, getGender, getCity){
+		let dataFormat = { userId:getUserId, name:getName, gender:getGender, city:getCity };
+		return dataFormat
+	}
+
+	
+
+	
+	vueOJ.deleteBlankUser = function(){
+		$("#tempTr").remove();
+		this.isCreateRow = false;
+	}
+	vueOJ.selectUselist = function(){
+		axios.get('/SpringWebPrj/users').then(function(response){
+			vueOJ.userList = response.data.data;
+		}).catch(function(error){
+			console.log(error);
+		}).then(function(){
+			// finally execute code
+		});
+	}
+	vueOJ.selectUselist();
 	vueOJ.userEdit = function(getUserId){
 		let userEditName =$("#"+getUserId+"_name").val();
 		let userEditGender =$("#"+getUserId+"_gender").val();
 		let userEditCity =$("#"+getUserId+"_city").val();
-		let sendData = setDataFormat(getUserId, userEditName, userEditGender, userEditCity);
+		let sendData = this.setDataFormat(getUserId, userEditName, userEditGender, userEditCity);
 		axios({
 			method:'put',
 			url: '/SpringWebPrj/users',
@@ -96,7 +100,7 @@ selectUselist = function(){
 			alert('error'+ error);
 			console.log(error);
 		}).then(function(){
-			selectUselist();
+			vueOJ.selectUselist();
 		});
 		
 	}
@@ -116,8 +120,62 @@ selectUselist = function(){
 			alert('error'+ error);
 			console.log(error);
 		}).then(function(){
-			selectUselist();
+			vueOJ.selectUselist();
 		});
+	}
+	vueOJ.addUser = function(){
+		let userAddUserId =$("#tempUserId").val();
+		let userAddName =$("#tempName").val();
+		let userAddGender =$("#tempGender").val();
+		let userAddCity =$("#tempCity").val();
+		let sendData = this.setDataFormat(userAddUserId, userAddName, userAddGender, userAddCity);
+		axios({
+			method:'post',
+			url: '/SpringWebPrj/users',
+			data: sendData
+		}).then(function(response){
+			let getResult = response.data.result;
+			if(getResult){
+				alert(userAddUserId + '님의 사용자 정보가 등록 되었습니다');
+			} else {
+				alert('사용자 정보 등이 실패하였습니다');
+			}
+		}).catch(function(error){
+			alert('error'+ error);
+			console.log(error);
+		}).then(function(){
+			vueOJ.selectUselist();
+			vueOJ.deleteBlankUser();
+		});
+	}
+	
+	addRecord = function(){
+		if(!vueOJ.isCreateRow){
+			vueOJ.isCreateRow = true;
+			let recordLength = $("#printUserList").children().eq(3).prevObject.length*1;
+			recordLength = recordLength - 1;
+			
+			let emptRecord = "<tr id='tempTr'>";
+			emptRecord += "<td><input type='text' id='tempUserId'></td>";
+			emptRecord += "<td><input type='text' id='tempName'></td>";
+			emptRecord += "<td><input type='text' id='tempGender'></td>";
+			emptRecord += "<td><input type='text' id='tempCity'></td>";
+			emptRecord += "<td><button onclick='addUserCall()'>등록</button></td>";
+			emptRecord += "<td><button onclick='deleteBlankUserCall()'>삭제</button></td>";
+			emptRecord += "</tr>";
+			$("#printUserList").append(emptRecord);
+			let createRow = $("#tempTr");
+			createRow.prev().before(createRow);	
+		} else {
+			alert("이미 새로운 레코드가 존재합니다. 레코드를 등록하세요");
+			
+		}
+	}
+	addUserCall = function(){
+		vueOJ.addUser();
+	}
+	deleteBlankUserCall = function(){
+		vueOJ.deleteBlankUser();
 	}
 	</script>
 </body>

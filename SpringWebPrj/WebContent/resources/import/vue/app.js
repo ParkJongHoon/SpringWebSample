@@ -1,8 +1,8 @@
 var vueOJ = new Vue({
 	    el: '#app',
+	    name: 'TableBasic',
 	    data: {
-	        userList : []
-	    },
-	    methods:{
+	        userList : [],
+	        isCreateRow : false
 	    }
 	})
