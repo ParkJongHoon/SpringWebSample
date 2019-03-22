@@ -34,8 +34,7 @@ public class RestfulUserController {
 	public Map<String, Object> getUserList() {
 		List<UserVO> userList = userService.getUserList();
 		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("result", Boolean.TRUE);
-		result.put("data", userList);
+		result.put("userList", userList);
 		return result;
 	}
 	

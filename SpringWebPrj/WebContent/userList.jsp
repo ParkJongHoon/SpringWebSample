@@ -1,21 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!doctype html>
 <html>
 <head>
 <title>사용자 관리</title>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
 <!-- Optional theme -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="<c:url value="/resources/import/lib/vue.min.js" />"></script>
+<script src="<c:url value="/resources/import/lib/vue-material.min.js" />"></script>
 <script src="<c:url value="/resources/import/lib/axios.min.js" />"></script>
 <script src="<c:url value="/resources/import/lib/jquery-3.3.1.min.js" />"></script>
+<meta content="width=device-width,initial-scale=1,minimal-ui" name="viewport">
+<link rel="stylesheet" href="<c:url value="/resources/import/style/vue-material/font.css" />">
+<link rel="stylesheet" href="<c:url value="/resources/import/style/vue-material/vue-material.min.css" />">
+<link rel="stylesheet" href="<c:url value="/resources/import/style/vue-material/default.css" />">
 <script>
 
 </script>
 </head>
 <body>
-	<div id="app" class="container">
+	<div id="app">
 		<h2 class="text-center">사용자 목록</h2>
 		<table class="table table-bordered table table-hover"> 
 			<thead> 
@@ -54,8 +59,29 @@
 			</tr>
 		</tbody>
 	</table>
+	<template>
+  <div>
+    <md-table v-model="userList" md-card id="printUserList">
+      <md-table-toolbar>
+        <h1 class="md-title">Users</h1>
+      </md-table-toolbar>
+
+      <md-table-row slot="md-table-row" slot-scope="{ item }" >
+        <md-table-cell md-label="ID" md-sort-by="id">{{ item.userId }}</md-table-cell>
+        <md-table-cell md-label="Name" md-sort-by="name">{{ item.name }}</md-table-cell>
+        <md-table-cell md-label="Gender" md-sort-by="gender">{{ item.gender }}</md-table-cell>
+        <md-table-cell md-label="City" md-sort-by="city">{{ item.city }}</md-table-cell>
+        <md-table-cell md-label="Edit" md-sort-by="edit"><button v-on:click="userEdit(item.userId)">수정</button></md-table-cell>
+        <md-table-cell md-label="Delete" md-sort-by="delete"><button v-on:click="deleteUser(item.userId)">삭제</button></md-table-cell>
+      </md-table-row>
+    </md-table>
+  </div>
+</template>
+
 	</div>
+	
 	<script src="<c:url value="/resources/import/vue/app.js" />"></script>
+	
 	<script type="text/javascript">
 	
 	vueOJ.setDataFormat = function(getUserId, getName, getGender, getCity){
@@ -72,7 +98,8 @@
 	}
 	vueOJ.selectUselist = function(){
 		axios.get('/SpringWebPrj/users').then(function(response){
-			vueOJ.userList = response.data.data;
+			vueOJ.userList = response.data.userList;
+			console.log(vueOJ.users);
 		}).catch(function(error){
 			console.log(error);
 		}).then(function(){
