@@ -21,75 +21,83 @@
 </head>
 <body>
 	<div id="app">
-		<h2 class="text-center">사용자 목록</h2>
-		<table class="table table-bordered table table-hover"> 
-			<thead> 
-				<tr> 
-					<th>아이디</th> 
-					<th>이름</th> 
-					<th>성별</th>
-					<th>거주지</th>
-					<th>&nbsp;</th>
-					<th>&nbsp;</th>
-				</tr> 
-		</thead> 
-		<tbody id="printUserList"> 
-			
-				<tr v-for="user in userList">
-					<td><p>{{user.userId}}</p></td>
-					<td><input type="text" :id="user.userId + '_name'" :value="user.name"></td>
-					<td><input type="text" :id="user.userId + '_gender'" :value="user.gender"></td>
-					<td><input type="text" :id="user.userId + '_city'" :value="user.city"></td>
-					<td>
-					     <!--<a :href="'updateUserForm.do?id=' + user.userId">수정</a>-->
-					     <button v-on:click="userEdit(user.userId)">수정</button>
-					     
-					</td>
-					<td>
-					<!--  <td><a :href="'deleteUser.do/' + user.userId">삭제</a></td> -->
-						<button v-on:click="deleteUser(user.userId)">삭제</button>
-					</td>
-				</tr>
-			
-			<tr>
-				<td colspan="7">
-					<!--  <a href="insertUserForm.do">사용자 등록</a>-->
-					<button onclick="addRecord()">사용자 등록</button>
-				</td>
-			</tr>
-		</tbody>
-	</table>
 	<template>
-  <div>
-    <md-table v-model="userList" md-card id="printUserList">
-      <md-table-toolbar>
-        <h1 class="md-title">Users</h1>
-      </md-table-toolbar>
-
-      <md-table-row slot="md-table-row" slot-scope="{ item }" >
-        <md-table-cell md-label="ID" md-sort-by="id">{{ item.userId }}</md-table-cell>
-        <md-table-cell md-label="Name" md-sort-by="name">{{ item.name }}</md-table-cell>
-        <md-table-cell md-label="Gender" md-sort-by="gender">{{ item.gender }}</md-table-cell>
-        <md-table-cell md-label="City" md-sort-by="city">{{ item.city }}</md-table-cell>
-        <md-table-cell md-label="Edit" md-sort-by="edit"><button v-on:click="userEdit(item.userId)">수정</button></md-table-cell>
-        <md-table-cell md-label="Delete" md-sort-by="delete"><button v-on:click="deleteUser(item.userId)">삭제</button></md-table-cell>
-      </md-table-row>
-    </md-table>
-  </div>
-</template>
+	  <div>
+	    <md-table v-model="userList" md-card >
+	      <md-table-toolbar>
+	        <h1 class="md-title">Users</h1>
+	      </md-table-toolbar>
+	      <md-table-row slot="md-table-row" slot-scope="{ item }">
+	        <md-table-cell md-label="ID" md-sort-by="id">{{ item.userId }}</md-table-cell>
+	        <md-table-cell md-label="Name" md-sort-by="name">{{ item.name }}</md-table-cell>
+	        <md-table-cell md-label="Gender" md-sort-by="gender">{{ item.gender }}</md-table-cell>
+	        <md-table-cell md-label="City" md-sort-by="city">{{ item.city }}</md-table-cell>
+	        <md-table-cell md-label="Edit" md-sort-by="edit"><button :onclick="'vueOJ.userEdit(&quot;'+item.userId+'&quot;)'">수정</button></md-table-cell>
+	        <md-table-cell md-label="Delete" md-sort-by="delete"><button :onclick="'vueOJ.deleteUser(&quot;'+item.userId+'&quot;)'">삭제</button></md-table-cell>
+	      </md-table-row>
+	      <md-table-row id="registrationButton">
+	        <md-table-cell colspan="7"><button v-on:click="changeInsertLine(true)">사용자 등록</button></md-table-cell>
+	      </md-table-row>
+	    </md-table>
+	  </div>
+	</template>
+	<br>
+	
+	<template>
+	  <div id="insertTemplate" style="display: none">
+	    <md-table md-card >
+		  <md-table-toolbar>
+		    <h1 class="md-title">insert User</h1>
+	      </md-table-toolbar>
+	      <md-table-row>
+	        <md-table-head>ID</md-table-head>
+	        <md-table-head>Name</md-table-head>
+	        <md-table-head>Gender</md-table-head>
+	        <md-table-head>City</md-table-head>
+	        <md-table-head>Add</md-table-head>
+	        <md-table-head>Cancel</md-table-head>
+	      </md-table-row>
+	      <md-table-row  slot="md-table-row">
+	        <md-table-cell><input type='text' id='tempUserId'></md-table-cell>
+	        <md-table-cell><input type='text' id='tempName'></md-table-cell>
+	        <md-table-cell>
+			    <select id="tempGender">
+		          <option value="남">남</option>
+		          <option value="여">여</option>
+		        </select>
+        	</md-table-cell>
+	        <md-table-cell><input type='text' id='tempCity'></md-table-cell>
+	        <md-table-cell><button v-on:click="addUser()">등록</button></md-table-cell>
+	        <md-table-cell><button v-on:click="changeInsertLine(false)">등록취소</button></md-table-cell>
+	      </md-table-row>
+	    </md-table>
+	  </div>
+	</template>
 
 	</div>
 	
 	<script src="<c:url value="/resources/import/vue/app.js" />"></script>
 	
 	<script type="text/javascript">
-	
 	vueOJ.setDataFormat = function(getUserId, getName, getGender, getCity){
 		let dataFormat = { userId:getUserId, name:getName, gender:getGender, city:getCity };
+		$("#tempUserId").val("");
+		$("#tempName").val("");
+		$("#tempGender").val("");
+		$("#tempCity").val("");
 		return dataFormat
 	}
 
-	
+	vueOJ.changeInsertLine = function(input){
+		if (input){
+			$("#insertTemplate").css("display", "");
+			$("#registrationButton").css("display", "none");
+		} else {
+			$("#insertTemplate").css("display", "none");
+			$("#registrationButton").css("display", "");
+		}
+		
+	}
 
 	
 	vueOJ.deleteBlankUser = function(){
@@ -103,6 +111,7 @@
 		}).catch(function(error){
 			console.log(error);
 		}).then(function(){
+			vueOJ.changeInsertLine(false);
 			// finally execute code
 		});
 	}
@@ -131,7 +140,7 @@
 		});
 		
 	}
-	vueOJ,deleteUser = function(getUserId){
+	vueOJ.deleteUser = function(getUserId){
 		
 		axios({
 			method:'delete',
@@ -172,7 +181,7 @@
 			console.log(error);
 		}).then(function(){
 			vueOJ.selectUselist();
-			vueOJ.deleteBlankUser();
+			//vueOJ.deleteBlankUser();
 		});
 	}
 	
