@@ -15,9 +15,7 @@
 <link rel="stylesheet" href="<c:url value="/resources/import/style/vue-material/font.css" />">
 <link rel="stylesheet" href="<c:url value="/resources/import/style/vue-material/vue-material.min.css" />">
 <link rel="stylesheet" href="<c:url value="/resources/import/style/vue-material/default.css" />">
-<script>
 
-</script>
 </head>
 <body>
 	<div id="app">
@@ -107,7 +105,6 @@
 	vueOJ.selectUselist = function(){
 		axios.get('/SpringWebPrj/users').then(function(response){
 			vueOJ.userList = response.data.userList;
-			console.log(vueOJ.users);
 		}).catch(function(error){
 			console.log(error);
 		}).then(function(){
